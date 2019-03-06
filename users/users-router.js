@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('./userDb.js');
+const postDb = require('./../posts/postDb.js');
 
 const router = express.Router();
 
@@ -19,6 +20,24 @@ router.get('/:id', async (req, res) => {
     const user = await db.getById(id);
     if(user) {
       res.status(200).json(user);
+    } else {
+      res.status(404).json({error: "User with specified ID does not exist."});
+    }
+  } catch (e) {
+    res.status(500).json({err: "Something went wrong with the server."});
+  }
+});
+
+router.get('/:id/posts', async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const user = await db.getById(id);
+    
+    if(user) {
+      const posts = await postDb.get();
+      const filteredPosts = posts.filter(post => post.user_id === Number(id));
+      res.status(200).json(filteredPosts);
     } else {
       res.status(404).json({error: "User with specified ID does not exist."});
     }
