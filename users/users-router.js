@@ -4,6 +4,11 @@ const postDb = require('./../posts/postDb.js');
 
 const router = express.Router();
 
+function capitalize(req, res, next) {
+  req.body.name = req.body.name.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
+  next();
+}
+
 router.get('/', async (req, res) => {
   try {
     const users = await db.get();
@@ -33,7 +38,7 @@ router.get('/:id/posts', async (req, res, next) => {
 
   try {
     const user = await db.getById(id);
-    
+
     if(user) {
       const posts = await postDb.get();
       const filteredPosts = posts.filter(post => post.user_id === Number(id));
@@ -46,7 +51,7 @@ router.get('/:id/posts', async (req, res, next) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', capitalize, async (req, res) => {
   const newUser = req.body;
 
   try {
