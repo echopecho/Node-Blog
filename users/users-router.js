@@ -62,7 +62,7 @@ router.post('/', capitalize, async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', capitalize, async (req, res) => {
   const newUser = req.body;
   const { id } = req.params;
 
